@@ -1,4 +1,6 @@
-from zipfile import ZipFile
+import datetime
+from zipfile import ZipFile, ZipInfo
+import io
 
 filepath = "test.zip"
 user = "admin"
@@ -6,6 +8,7 @@ computer = "test_computer"
 name_of_system = "Linux"
 # Simulate present working directory (initially root "/")
 current_dir = "/"
+added_files = []
 
 
 # Function to display current working directorypt
@@ -16,14 +19,14 @@ def get_current_dir():
 def change_directory(new_dir, zip_file):
     global current_dir
 
-    # Ensure directory starts from root if it begins with '/'
+        # Ensure directory starts from root if it begins with '/'
     if new_dir.startswith("/"):
         temp_dir = new_dir
     else:
         # Otherwise, navigate relative to the current directory
         temp_dir = f"{current_dir}/{new_dir}".strip("/")
 
-    # Check if the directory exists in the zip file
+        # Check if the directory exists in the zip file
     possible_dirs = [
         file
         for file in zip_file.namelist()
@@ -35,6 +38,25 @@ def change_directory(new_dir, zip_file):
         current_dir = "/" + temp_dir.strip("/")
     else:
         print(f"cd: no such directory: {new_dir}")
+
+
+        # Function to reverse a string
+        def reverse_string(input_string):
+            return input_string[::-1]
+        
+        # Function to simulate touch (create an empty file)
+        def touch(filename, zip_file):
+        
+        # Ensure the file is created relative to the current directory
+            full_path = f"{current_dir.strip('/')}/{filename}".strip("/")
+
+        # Check if the file already exists in the ZIP or added files
+            if full_path in zip_file.namelist() or full_path in added_files:
+                print(f"touch: cannot touch '{filename}': File exists")
+            else:
+        # Simulate file creation by adding it to the added_files list
+                added_files.append(full_path)
+                print(f"Created empty file: {full_path}")
 
 
 # Open the ZIP file (virtual file system)
@@ -86,14 +108,14 @@ with ZipFile(filepath, "r") as zip_file:
             _, filename = command.split(" ", 1)
             touch(filename, zip_file)
 
-        elif command == "mkdir":
-            import os
-            my_cwd = os.getcwd()
-            new_dir = input()
-            path = os.path.join(my_cwd, new_dir)
-            if not os.path.exists(path):
-                os.mkdir(path)
-                print(os.listdir())
+        #elif command == "mkdir":
+            #import os
+            #my_cwd = os.getcwd()
+            #new_dir = input()
+            #path = os.path.join(my_cwd, new_dir)
+            #if not os.path.exists(path):
+                #os.mkdir(path)
+                #print(os.listdir())
             #создание новой папки
             
         #elif command == "rm":
@@ -111,5 +133,7 @@ with ZipFile(filepath, "r") as zip_file:
             break
 
         else:
-            # Handle invalid commands
+            # Handle invalid command
             print("Enter a valid command (ls, pwd, exit, uname, cat, mkdir, touch)")
+
+            #xfbdzfb
